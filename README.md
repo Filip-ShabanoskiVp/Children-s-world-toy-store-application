@@ -1,1 +1,1 @@
-# Children's world toy - Store application
+# Children's world - Toy store application
