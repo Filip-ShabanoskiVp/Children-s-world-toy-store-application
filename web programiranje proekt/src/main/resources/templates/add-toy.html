@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+</head>
+<body style="background-color: #E6D1F2;">
+<!-- Navigation -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Childrens World</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/toys">Toys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Statistics</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/logUp">Sign Up</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Sing In</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" sec:authentication="name" href="/user-profile"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout" sec:authorize="isAuthenticated()">Sing out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container" style="margin-top: 95px">
+    <div class="row">
+        <div class="col-md-9">
+            <form enctype="multipart/form-data" th:action="@{/toys}"
+                  method="post" th:object="${toy}">
+                <div class="card" style="position: relative;bottom: 30px;">
+                    <div class="card-header" style="background-color: grey">
+                        <h2 class="text-white">Add product</h2>
+                    </div>
+                    <div class="card-body">
+                        <br>
+                        <input type="hidden" name="id" th:value="${toy?.getId()}">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control"
+                                   id="name" name="name"
+                                   th:value="${toy?.getName()}"
+                                   th:field="*{name}"
+                                   required
+                                   placeholder="Enter the Toy name">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control"
+                                   id="description" name="description"
+                                   th:value="${toy?.getDescription()}"
+                                   th:field="*{description}"
+                                   required
+                                   placeholder="Enter the Description">
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <input type="text" class="form-control"
+                                   id="color" name="description"
+                                   th:value="${toy.getColor()}"
+                                   th:field="*{color}"
+                                   required
+                                   placeholder="Enter the Color">
+                        </div>
+                        <div class="form-group">
+                            <h4 class="text-danger"
+                                th:if="${#fields.hasErrors('quantity')}"
+                                th:errors="*{quantity}"></h4>
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="form-control"
+                                   id="quantity" name="quantity"
+                                   th:value="${toy?.quantity}"
+                                   th:field="*{quantity}"
+                                   required
+                                   placeholder="Enter the quantity">
+                        </div>
+                        <div class="form-group">
+                            <h4 class="text-danger"
+                                th:if="${#fields.hasErrors('cost')}"
+                                th:errors="*{cost}"></h4>
+                            <label for="cost">Cost</label>
+                            <input type="number" class="form-control"
+                                   id="cost" name="cost"
+                                   th:value="${toy?.getCost()}"
+                                   th:field="*{cost}"
+                                   required
+                                   placeholder="Enter the Description">
+                        </div>
+                        <div class="form-group">
+                            <label>Manufacturer</label>
+                            <a href="/add-manufacturer"
+                               style="margin-left: 10px;">new Manufacturer</a>
+                            <select th:field="*{manufacturer.id}" class="form-control">
+                                <option
+                                        th:selected="${toy.getManufacturer() != null && toy.getManufacturer().getId() == man.getId()}"
+                                        th:each="man : ${manufacturers}"
+                                        th:value="${man.getId()}"
+                                        th:text="${man.getName()}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categories</label>
+                            <select class="form-control" th:field="*{category}">
+                                <option
+                                        th:selected="${toy.getCategory() != null && toy.getCategory().getName() == category.getName()}"
+                                        th:each="category : ${categories}"
+                                        th:value="${category}"
+                                        th:text="${category.getName()}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Image</label>
+                            <input type="file" class="form-control" id="image" name="image">
+                        </div>
+                    </div>
+                    <div style="background-color: grey;" class="card-footer">
+                        <button  type="submit" class="btn btn-primary">Save</button>
+                        <a href="/toys" class="btn btn-success"
+                           style="margin-left: 10px;">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer -->
+<footer class="py-5 bg-primary" style="position:absolute;bottom:-70%;width:100%;">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Childrens World</p>
+    </div>
+</footer>
+</body>
+</html>

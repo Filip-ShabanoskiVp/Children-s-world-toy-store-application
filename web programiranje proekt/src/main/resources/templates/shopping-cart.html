@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body style="background-color: #E6D1F2;">
+<!-- Navigation -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Childrens World</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/toys">Toys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Statistics</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/logUp">Sign Up</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Sing In</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" sec:authentication="name" href="/user-profile"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout" sec:authorize="isAuthenticated()">Sing out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 card">
+            <form action="/shopping-carts" method="post">
+                <div class="card" style="margin-top: 65px;">
+                    <div class="card-header">
+                        <h2>Checkout</h2>
+                    </div>
+                    <div class="card-body">
+                        <h1 th:if="${param.error}" th:text="${param.error}"></h1>
+                        <div class="table-responsive" style=" height:150px;overflow:auto;
+                        margin-top:20px;">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>image</th>
+                                    <th>name</th>
+                                    <th>localDateTime</th>
+                                    <th>description</th>
+                                    <th>cost</th>
+                                    <th>manufacturer</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="product: ${shoppingCart.getProducts()}">
+                                    <td><img th:src="${product.getProductImage()}"
+                                             width="100px"height="100px"></td>
+                                    <td th:text="${product.getName()}"></td>
+                                    <td th:text="${product.getLocalDateTime()}"></td>
+                                    <td th:text="${product.getDescription()}"></td>
+                                    <td th:text="${product.getCost()}"></td>
+                                    <td th:text="${product.getManufacturer().getName()}">{{product.manufacturer.name}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <h3 th:text="${amount/100} + ' ' + ${currency}"></h3>
+                            <br>
+                            <br>
+                        </div>
+                        <br>
+                        <input type="hidden" th:value="${amount}" name="amount">
+                        <input type="hidden" th:value="${currency}" name="currency">
+                        <script
+                                src='https://checkout.stripe.com/checkout.js'
+                                class='stripe-button'
+                                th:attr='data-key=${publicKey},
+                                data-amount=${amount},
+                                data-currency=${currency}'
+                                data-name='Whildrens World'
+                                data-description='Childrens World Checkout'
+                                data-image
+                                        ='https://www.baeldung.com/wp-content/themes/baeldung/favicon/android-chrome-192x192.png'
+                                data-locale='auto'
+                                data-zip-code='false'>
+                        </script>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <form th:action="@{/shopping-carts/cancel}" th:method="post">
+        <button type="submit" class="btn btn-danger btn-block" style="position:relative;left:110px;width:1150px">Cancel</button>
+    </form>
+</div>
+<!-- Footer -->
+<footer class="py-5 bg-primary" style="position:absolute;bottom:-60%;width:100%;">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Childrens World</p>
+    </div>
+</footer>
+</body>
+</html>

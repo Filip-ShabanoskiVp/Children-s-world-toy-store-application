@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background-color: #E6D1F2;">
+<!-- Navigation -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Childrens World</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/toys">Toys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logUp" sec:authorize="!isAuthenticated()">Log Up</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" sec:authentication="name" href="/user-profile"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout" sec:authorize="isAuthenticated()">Sing out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="card" style="margin-top: 150px">
+        <div class="card-header">
+            <h2>User profile</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Personal Number</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user: ${user}">
+                    <td th:text="${user.getUsername()}"></td>
+                    <td th:text="${user.getFirstName()}"></td>
+                    <td th:text="${user.getLastName()}"></td>
+                    <td th:text="${user.getEmail()}"></td>
+                    <td th:text="${user.getPersonal_Number()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <a href="/shopping-carts" class="btn btn-secondary"
+               sec:authorize="hasRole('ROLE_USER')">Shopping-cart</a>
+            <a href="/admin" class="btn btn-secondary"
+               sec:authorize="hasRole('ROLE_ADMIN')">Show All Users</a>
+
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer class="py-5 bg-primary" style="position:absolute;bottom:-60%;width:100%;">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Childrens World</p>
+    </div>
+</footer>
+</body>
+</html>

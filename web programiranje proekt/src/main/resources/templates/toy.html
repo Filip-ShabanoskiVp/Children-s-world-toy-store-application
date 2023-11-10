@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+<body style="background-color: #E6D1F2;">
+<!-- Navigation -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Childrens World</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/toys">Toys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Statistics</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/logUp">Sign Up</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">Sing In</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" sec:authentication="name" href="/user-profile"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout" sec:authorize="isAuthenticated()">Sing out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content" style="margin-top: 100px;margin-left: 30px;width: 1285px; ">
+    <div class="row">
+        <div class="col-12 card" style="height: 750px">
+            <div th:if="${param.message}">
+                <h2 class="text-center text-primary" th:text="${param.message}"></h2>
+            </div>
+
+            <div th:if="${param.error}">
+                <h2 class="text-center text-danger" th:text="${param.error}"></h2>
+            </div>
+            <h2>Toys</h2>
+
+          <div th:if="${category}!=null">
+        </div>
+                <form sec:authorize="hasRole('ROLE_USER')">
+                    <div class="input-group">
+                        <div class="form-outline">
+                            <input type="search" name="nameSearch"
+                                   class="form-control"
+                                   placeholder="Type........."/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            <br>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>image</th>
+                        <th>name</th>
+                        <th>localDateTime</th>
+                        <th>description</th>
+                        <th>cost</th>
+                        <th>quantity</th>
+                        <th>Color</th>
+                        <th>manufacturer</th>
+                        <th>Category</th>
+                        <th></th>
+                        <th></th>
+<!--                        <th></th>-->
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="toy: ${toys}" th:if="${toy.getQuantity()>0
+                    && category==null}">
+                        <td><img th:src="${toy.getProductImage()}"
+                                 width="100px"height="100px"></td>
+                        <td th:text="${toy.getName()}"></td>
+                        <td th:text="${toy.getLocalDateTime()}"></td>
+                        <td th:text="${toy.getDescription()}"></td>
+                        <td th:text="${toy.getCost()}"></td>
+                        <td th:text="${toy.getQuantity()}"></td>
+                        <td th:text="${toy.getColor()}"></td>
+                        <td th:text="${toy.getManufacturer().getName()}"></td>
+                        <td th:text="${toy.getCategory().getName()}"></td>
+                        <td>
+                            <a th:href="@{/toys/{id}/edit(id=${toy.getId()})}"
+                               class="btn btn-secondary"
+                               sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                        </td>
+<!--                        <td>-->
+<!--                            <form  th:method="POST" th:action="@{'/toys/{id}/delete'(id=${toy.getId()})}" >-->
+<!--                                <button class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</button>-->
+<!--                            </form>-->
+<!--                        </td>-->
+                        <td>
+                            <form th:action="@{/shopping-carts/{id}/add-product(id=${toy.getId()})}" th:method="Post">
+                                <button type="submit" class="btn btn-primary"
+                                        sec:authorize="hasRole('ROLE_USER')">Add to Cart</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/shopping-carts/{id}/remove-product(id=${toy.getId()})}" th:method="Post">
+                                <button type="submit" class="btn btn-danger"
+                                        sec:authorize="hasRole('ROLE_USER')">Remove from Cart</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:each="toy: ${toys}" th:if="${toy.getQuantity()>0
+                    && category !=null && category==toy.getCategory().getName()}">
+                        <td><img th:src="${toy.getProductImage()}"
+                                 width="100px"height="100px"></td>
+                        <td th:text="${toy.getName()}"></td>
+                        <td th:text="${toy.getLocalDateTime()}"></td>
+                        <td th:text="${toy.getDescription()}"></td>
+                        <td th:text="${toy.getCost()}"></td>
+                        <td th:text="${toy.getQuantity()}"></td>
+                        <td th:text="${toy.getColor()}"></td>
+                        <td th:text="${toy.getManufacturer().getName()}"></td>
+                        <td th:text="${toy.getCategory().getName()}"></td>
+                        <td>
+                            <a th:href="@{/toys/{id}/edit(id=${toy.getId()})}"
+                               class="btn btn-secondary"
+                               sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                        </td>
+<!--                        <td>-->
+<!--                            <form  th:method="POST" th:action="@{'/toys/{id}/delete'(id=${toy.getId()})}" >-->
+<!--                                <button class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</button>-->
+<!--                            </form>-->
+<!--                        </td>-->
+                        <td>
+                            <form th:action="@{/shopping-carts/{id}/add-product(id=${toy.getId()})}" th:method="Post">
+                                <button type="submit" class="btn btn-primary"
+                                        sec:authorize="hasRole('ROLE_USER')">Add to Cart</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/shopping-carts/{id}/remove-product(id=${toy.getId()})}" th:method="Post">
+                                <button type="submit" class="btn btn-danger"
+                                        sec:authorize="hasRole('ROLE_USER')">Remove from Cart</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${toys.size()==0}">No toys are available</tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <a class="btn btn-secondary btn-block" href="/toys/add-toy" sec:authorize="hasRole('ROLE_ADMIN')">new Toy</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-5 bg-primary" style="position:absolute;bottom:-60%;width:100%;">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Childrens World</p>
+    </div>
+</footer>
+</body>
+</html>
